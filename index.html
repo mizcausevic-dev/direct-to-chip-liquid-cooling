@@ -6,9 +6,43 @@
   <title>Direct-to-Chip Liquid Cooling</title>
   <meta name="description" content="A 34-second, frame-accurate sectional explainer of one direct-to-chip liquid-cooling arrangement for accelerator racks. Conceptual and source-informed. Not a certified design.">
   <link rel="canonical" href="https://mizcausevic-dev.github.io/direct-to-chip-liquid-cooling/">
+  <style>
+    body{margin:0;background:#0B1019;color:#E6E8EE;font:17px/1.5 ui-sans-serif,system-ui,sans-serif}
+    header,article,footer{width:min(920px,calc(100% - 32px));margin:0 auto}
+    a{color:#00E5FF}
+    canvas{width:100%;height:auto;background:#0B1019;display:block}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 0}
+    button{background:#141b28;color:#E6E8EE;border:1px solid rgba(255,255,255,.16);border-radius:6px;padding:8px 12px}
+    input[type=range]{flex:1;min-width:160px;accent-color:#00E5FF}
+    p,li{color:#A8B1C2}
+  </style>
 </head>
 <body>
-  <p>The full player is in this repository. Open the complete index once the renderer upload finishes. <a href="article-Cursor.md">Essay</a></p>
+  <header>
+    <p style="color:#00E5FF;letter-spacing:.14em;text-transform:uppercase;font-size:12px">Data Center Infrastructure</p>
+    <h1>Direct-to-Chip Liquid Cooling</h1>
+    <p>A 34-second orthographic explainer, 1,020 frames at 30 fps. One selected cold-plate architecture. Heat is moved to outside air. It is not destroyed, and this is not a certified design.</p>
+  </header>
+  <canvas id="stage" width="1920" height="1080" role="img" aria-label="Direct-to-chip liquid cooling explainer"></canvas>
+  <div class="row" style="width:min(920px,calc(100% - 32px));margin:0 auto">
+    <button id="play" type="button">Play</button>
+    <input id="scrub" type="range" min="0" max="1019" value="0" aria-label="Frame">
+    <span id="readout"></span>
+  </div>
+  <div style="width:min(920px,calc(100% - 32px));margin:0 auto;display:flex;gap:8px;flex-wrap:wrap">
+    <button type="button" data-jump="0">01 System</button>
+    <button type="button" data-jump="150">02 Package</button>
+    <button type="button" data-jump="300">03 Return</button>
+    <button type="button" data-jump="510">04 Loops</button>
+    <button type="button" data-jump="750">05 Whole system</button>
+  </div>
+  <span id="chapter-live" style="display:block;width:min(920px,calc(100% - 32px));margin:8px auto;color:#A8B1C2"></span>
+  <p id="reduced-note" hidden style="width:min(920px,calc(100% - 32px));margin:8px auto;color:#FFD166">Motion is reduced until you press Play.</p>
+  <article>
+    <h2>What the film is showing</h2>
+    <p>Cold plates on accelerator packages. Coolant stays inside the plate. A liquid-to-liquid CDU passes heat to a separate facility loop. The fluids do not mix in this selected arrangement. CDU layouts vary. This is not total heat capture, not a leak-free claim, and not a measured temperature.</p>
+    <p>Mechanism: U.S. Department of Energy, Best Practice Guide for Data Center Design, July 2024, section 5.6. <a href="article-Cursor.md">Read the essay</a>.</p>
+  </article>
   <script type="module" src="js/player.js"></script>
 </body>
 </html>
