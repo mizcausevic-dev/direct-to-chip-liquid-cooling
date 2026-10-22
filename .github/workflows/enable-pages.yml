@@ -11,20 +11,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Publish from the pages branch
+      - name: Publish from the pages branch using the user token secret
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.CRSR_CLOUD }}
         run: |
           set +e
-          printf '%s\n' '{"build_type":"legacy","source":{"branch":"pages","path":"/"}}' > payload.json
-          {
-            echo POST
-            gh api --method POST -H "Accept: application/vnd.github+json" "/repos/${GITHUB_REPOSITORY}/pages" --input payload.json
-            echo POST_EXIT:$?
-            echo PUT
-            gh api --method PUT -H "Accept: application/vnd.github+json" "/repos/${GITHUB_REPOSITORY}/pages" --input payload.json
-            echo PUT_EXIT:$?
-          } > pages-api-result.txt 2>&1
+          if [ -z "$GH_TOKEN" ]; then
+            echo "CRSR_CLOUD secret is empty" > pages-api-result.txt
+          else
+            printf '%s\n' '{"build_type":"legacy","source":{"branch":"pages","path":"/"}}' > payload.json
+            {
+              echo POST
+              gh api --method POST -H "Accept: application/vnd.github+json" "/repos/${GITHUB_REPOSITORY}/pages" --input payload.json
+              echo POST_EXIT:$?
+            } > pages-api-result.txt 2>&1
+          fi
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
           git add pages-api-result.txt
