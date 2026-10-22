@@ -5,27 +5,32 @@ on:
   workflow_dispatch:
 permissions:
   administration: write
+  contents: write
   pages: write
-  contents: read
 jobs:
   enable:
     runs-on: ubuntu-latest
     steps:
-      - name: Publish the pages branch at the site root
+      - uses: actions/checkout@v4
+      - name: Ask GitHub to publish the pages branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -e
-          if gh api "/repos/${{ github.repository }}/pages" >/dev/null 2>&1; then
-            gh api --method PUT -H "Accept: application/vnd.github+json" \
-              "/repos/${{ github.repository }}/pages" \
-              -f build_type=legacy \
-              -f source[branch]=pages \
-              -f source[path]=/
-          else
-            gh api --method POST -H "Accept: application/vnd.github+json" \
-              "/repos/${{ github.repository }}/pages" \
-              -f build_type=legacy \
-              -f source[branch]=pages \
-              -f source[path]=/
-          fi
+          set +e
+          python3 - <<'PY'
+          import json
+          json.dump({"source":{"branch":"pages","path":"/"},"build_type":"legacy"}, open("payload.json","w"))
+          PY
+          {
+            echo POST
+            gh api --method POST -H "Accept: application/vnd.github+json" "/repos/${{ github.repository }}/pages" --input payload.json
+            echo POST_EXIT:$?
+            echo PUT
+            gh api --method PUT -H "Accept: application/vnd.github+json" "/repos/${{ github.repository }}/pages" --input payload.json
+            echo PUT_EXIT:$?
+          } > pages-api-result.txt 2>&1
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add pages-api-result.txt
+          git commit -m "Record Pages API result [skip ci]"
+          git push
